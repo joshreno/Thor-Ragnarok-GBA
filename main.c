@@ -3,6 +3,9 @@
 #include <string.h>
 #include "myLib.h"
 
+void waitForVBlank();
+
+
 enum GBAState {
 	START,
 	LOKI
@@ -13,7 +16,7 @@ enum GBAState {
 }
 
 int main(void) {
-	REG_DISPCNT = MODE_3 | BG2_ENABLE;
+	REG_DISPCNT = MODE3 | BG2_ENABLE;
 
 	enum GBAState state = START;
 
@@ -41,6 +44,5 @@ int main(void) {
 				break;
 		}
 	}
-
 	return 0;
 }
