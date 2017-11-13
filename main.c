@@ -4,60 +4,67 @@
 
 
 #include "myLib.h"
-#include "Assets/background.h"
-#include "Assets/gameOver.h"
-#include "Assets/lose.h"
-#include "Assets/start.h"
+#include "background.h"
+#include "gameOver.h"
+#include "lose.h"
+#include "start.h"
+#include "hela.h"
+#include "hulk.h"
+#include "thor.h"
+#include "loki.h"
+#include "text.h"
 
 enum GBAState {
 	START,
 	FIGHT,
 	LOSE,
 	GAMEOVER
-}
+};
 
 enum ENEMYState {
 	LOKI,
 	HULK,
 	HELA
-}
+};
 
-void start();
-void fight(ENEMYState enemy);
-void lose();
-void gameOver();
+void startGame();
+void fight(enum ENEMYState enemy);
+void loseGame(enum ENEMYState enemy);
+void gameover();
 
-GBAState state = START;
-ENEMYState enemy = LOKI;
+enum GBAState state = START;
+enum ENEMYState enemy = LOKI;
+
 int reset = 0;
-
-int health = 0;
-int attack = 0;
 int hp_dir = -1;
 int hp = 10;
 
-OBJLOCATION thor;
-OBJLOCATION enemy;
+objetcLocation thorE;
+objetcLocation enemyE;
+objetcLocation *thorPointer = &thorE;
+objetcLocation *enemyPointer = &enemyE;
 
 void setInitialVariables()
 {
-	thor.row = 5;
-	thor.col = 5;
-	thor.health = hp;
-	thor.dx = 0;
-	thor.dy = 0;
+	thorPointer->row = 5;
+	thorPointer->col = 5;
+	thorPointer->health = hp;
+	thorPointer->dx = 1;
+	thorPointer->dy = 1;
+	thorPointer->height = THOR_HEIGHT;
+	thorPointer->width = THOR_WIDTH;
 
-	enemy.row = 100;
-	enemy.col = 100;
-	enemy.health = hp;
-	enemy.dx = 0;
-	enemy.dy = 0;
-
+	enemyPointer->row = 100;
+	enemyPointer->col = 100;
+	enemyPointer->health = hp;
+	enemyPointer->dx = (-1) *(rand() % 3);
+	enemyPointer->dy = (-1) *(rand() % 3);
+	enemyPointer->height = LOKI_HEIGHT;
+	enemyPointer->width = LOKI_WIDTH;
 }
 
 int main(void) {
-	REG_DISPCNT = MODE3 | BG2_ENABLE | OBJ_ENABLE;
-	setInitialVariables();
+	REG_DISPCTL = MODE3 | BG2_ENABLE;
 	while (1)
 	{
 		waitForVblank();
@@ -68,86 +75,114 @@ int main(void) {
 		switch(state)
 		{
 			case START:
-				start();
+				startGame();
 				break;
-
 			case FIGHT:
+				setInitialVariables();
 				fight(enemy);
 				break;
 
 			case LOSE:
-				lose(enemy);
+				loseGame(enemy);
 				break;
 
 			case GAMEOVER:
-				gameOver();
+				gameover();
 				break;
 		}
 	}
 	return 0;
 }
 
-void start()
+void startGame()
 {
 	drawImage3(0, 0, 240, 160, start);
 	char str[11] = "Press START";
-	int count = 0;
+	drawString(10, 90, str, BLUE);
+	//int count = 0;
 	while (1)
 	{
 		if (KEY_DOWN_NOW(BUTTON_START))
 		{
+			drawImage3(0, 0, 240, 160, HeimdallsObservatory3Thor);
 			break;
-		}
-		// waitForVblank(); do I call this
-		count += 1;
-		if (count > 30)
-		{
-			count = 0;
-		} 
-		else if (count > 20)
-		{
-			fillScreen3(BLUE);
-			drawImage3(0, 0, 240, 160, start);
-		}
-		else
-		{
-			drawString(10, 90, str, BLUE);
 		}
 	}
 	state = FIGHT;
 }
 
-void fight(ENEMYState enemy)
+void fight(enum ENEMYState enemy)
 {
-	if (thor.health == 0) 
+	if (thorPointer->health == 0) 
 	{
 		state = LOSE;
 		return;
 	}
-	// the rest
-	drawImage3(0, 0, 240, 160, background);
+	if (KEY_DOWN_NOW(BUTTON_UP))
+	{
+		if (! (thorPointer->row + thorPointer->height > 160))
+		{
+			thorPointer->dy = 1;
+			thorPointer->row += thorPointer->dy;
+		}
+		drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
+	} else if (KEY_DOWN_NOW(BUTTON_DOWN))
+	{
+		if (! (thorPointer->row < 0))
+		{
+			thorPointer->dy = -1;
+			thorPointer->row += thorPointer->dy;
+		}
+		drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
+	} else if (KEY_DOWN_NOW(BUTTON_RIGHT))
+	{
+		if (! (thorPointer->col + thorPointer->width > 240))
+		{
+			thorPointer->dx = 1;
+			thorPointer->col += thorPointer->dx;
+		}
+		drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
+	} else if (KEY_DOWN_NOW(BUTTON_LEFT))
+	{
+		if (! (thorPointer->col > 0))
+		{
+			thorPointer->dx = -1;
+			thorPointer->col += thorPointer->dx;
+		}
+		drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
+	} else {
+		drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
+	}
+
+	// hela code
+	// 
+	if (enemy == HELA)
+	{
+		// do something
+	}
 
 
 }
 
-void lose(ENEMYState enemy)
+void loseGame(enum ENEMYState enemy)
 {
 	fillScreen3(BLACK);
 	drawImage3(0, 0, 240, 160, lose);
 	delay(100);
+	char *textLoki = "Lost to Loki";
+	char *textHulk = "Lost to Hulk";
+	char *textHela = "Lost to Hela";
+
 	switch (enemy)
 	{
 		case LOKI:
-			char txt[12] = "Lost to Loki";
-			drawString(10, 90, txt, YELLOW);
+			drawString(10, 90, textLoki, YELLOW);
 			break;
 		case HULK:
-			char txt[12] = "Lost to Hulk";
-			drawString(10, 90, txt, GREEN);
+			drawString(10, 90, textHulk, GREEN);
 			break;
 		case HELA:
-			char txt[12] = "Lost to Hela";
-			drawString(10, 90, txt, GREEN);
+			drawString(10, 90, textHela, GREEN);
 			break;
 	}
 	delay(100);
@@ -165,7 +200,7 @@ void lose(ENEMYState enemy)
 	state = START;
 }
 
-void gameOver()
+void gameover()
 {
 	delay(100);
 	fillScreen3(RED);

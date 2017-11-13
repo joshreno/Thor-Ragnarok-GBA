@@ -1,6 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
-#include <myLib.h>
+#include "myLib.h"
 
 void waitForVblank() {
   while(*SCANLINECOUNTER >= 160);

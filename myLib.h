@@ -10,7 +10,7 @@ extern unsigned short *videoBuffer;
 #define videoBuffer ((unsigned short *)0x6000000)
 #define REG_DISPCTL *(unsigned short *)0x4000000
 #define MODE3 3
-#define SCANLINECOUNTER *(volatile unsigned short *)0x4000006
+#define SCANLINECOUNTER (unsigned short *)0x4000006
 
 #define SPRITEMEM  ((u16 *)0x7000000)
 #define SPRITEDATA ((u16 *)(0x6010000))
@@ -32,7 +32,8 @@ extern unsigned short *videoBuffer;
 #define DKGRAY COLOR(15, 15, 15)
 
 
-#define OFFSET(row, col, rowlen)  ((row)*(rowlen)+(col))
+//#define OFFSET(row, col, rowlen)  ((row)*(rowlen)+(col))
+#define OFFSET(r,c) ((r)*240+(c))
 
 
 // Buttons
@@ -114,17 +115,17 @@ typedef struct
 typedef struct { 
 	int top, bottom, left, right; } BORDER;
 
-typedef struct {
+
+
+typedef struct OBJECTLOCATION{
 	int row,
-	int col,
-	int height,
-	int width,
-	int dx,
-	int dy,
-	int health
-} OBJLOCATION
-
-
+	col,
+	height,
+	width,
+	dx,
+	dy,
+	health;
+}objetcLocation;
 
 // Prototype
 void waitForVblank();
@@ -132,5 +133,5 @@ void drawImage3(int x, int y, int width, int height, const unsigned short *image
 void drawRectangle(int row, int col, int width, int height, unsigned short color);
 void setPixel(int row, int col, unsigned short color);
 void delay(int n);
-void updateHearts(int hp, const unsigned short *image);
+void updateHearts(int player, int hp, const unsigned short *image);
 void fillScreen3(volatile unsigned short color);
