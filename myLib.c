@@ -48,24 +48,29 @@ void delay(int n) {
 }
 
 void updateHearts(int player, int hp, const unsigned short *image) {
-  drawImage3(0, 0, 240, 160, image);
+  // player = 1, Thor
+  // player = 2, Loki
+  // player = 3, Hela or Hulk
+
+  //drawImage3(0, 0, 240, 160, image);
+  image = image + 1;
   unsigned short color;
   int ic;
   int ir;
   for (int h = 0; h < hp; h++) {
   	if (player == 1) {
-  		ic = 150 + 9*h;
+  		ic = 190 + 9*h;
   	} else {
-  		ic = 4;
+  		ic = 40;
   	}
     ir = 2;
     if (h <= hp) {
     	if (player == 1)
     	{
-    		color = RED;
-    	} else if (color == 2) {
+    		color = BLUE;
+    	} else if (player == 2) {
     		color = YELLOW;
-    	} else {
+    	} else if (player == 3){
     		color = GREEN;
     	}
     } else {

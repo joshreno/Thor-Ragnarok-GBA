@@ -13,12 +13,12 @@ PROGNAME = Thor_Ragnarok
 # that will be compiled into your program. For example
 # if you have main.c and myLib.c then in the following
 # line you would put main.o and myLib.o
-OFILES = main.o myLib.o background.o gameOver.o hela.o hulk.o loki.o lose.o start.o text.o thor.o
+OFILES = main.o myLib.o background.o gameOver.o hela.o hulk.o loki.o lose.o start.o text.o thor.o poster.o characters.o
 
 # The header files you have created.
 # This is necessary to determine when to recompile for files.
 # This should be a space (SPACE!) separated list of .h files
-HFILES = background.h gameOver.h hela.h hulk.h loki.h lose.h myLib.h start.h text.h thor.h
+HFILES = background.h gameOver.h hela.h hulk.h loki.h lose.h myLib.h start.h text.h thor.h poster.h characters.h
 
 ################################################################################
 # These are various settings used to make the GBA toolchain work

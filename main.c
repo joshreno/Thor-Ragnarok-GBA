@@ -13,6 +13,9 @@
 #include "thor.h"
 #include "loki.h"
 #include "text.h"
+#include "poster.h"
+#include "characters.h"
+#include "main.h"
 
 enum GBAState {
 	START,
@@ -37,7 +40,7 @@ enum ENEMYState enemy = LOKI;
 
 int reset = 0;
 int hp_dir = -1;
-int hp = 10;
+int hp = 5;
 
 objetcLocation thorE;
 objetcLocation enemyE;
@@ -57,8 +60,8 @@ void setInitialVariables()
 	enemyPointer->row = 100;
 	enemyPointer->col = 100;
 	enemyPointer->health = hp;
-	enemyPointer->dx = (-1) *(rand() % 3);
-	enemyPointer->dy = (-1) *(rand() % 3);
+	enemyPointer->dx = (-1) *(rand() % 1);
+	enemyPointer->dy = (-1) *(rand() % 1);
 	enemyPointer->height = LOKI_HEIGHT;
 	enemyPointer->width = LOKI_WIDTH;
 }
@@ -111,6 +114,8 @@ void startGame()
 	drawImage3(0, 0, 240, 160, background);
 	setInitialVariables();
 	drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
+	updateHearts(2, enemyPointer->health, background);
+	updateHearts(1, thorPointer->health, background);
 }
 
 void fight(enum ENEMYState enemy)
@@ -124,49 +129,62 @@ void fight(enum ENEMYState enemy)
 	{
 		state = GAMEOVER;
 	}
-	
+
+
+
+
 	delay(10);
 	if (KEY_DOWN_NOW(BUTTON_DOWN))
 	{
-		thorPointer->dy = 1;
+		if (thorPointer->row < (160-thorPointer->height)) {
+			thorPointer->dy = 1;
 
-		thorPointer->oldRow = thorPointer->row;
-		thorPointer->oldCol = thorPointer->col;
-		//drawImage3(thorPointer->oldRow, thorPointer->col, thorPointer->width, thorPointer->dy, background);
+			thorPointer->oldRow = thorPointer->row;
+			thorPointer->oldCol = thorPointer->col;
+			//drawImage3(thorPointer->oldRow, thorPointer->col, thorPointer->width, thorPointer->dy, background);
 
 
-		thorPointer->row = thorPointer->row + thorPointer->dy;
+			thorPointer->row = thorPointer->row + thorPointer->dy;
 
-		drawCopyImage(thorPointer->oldRow, thorPointer->oldCol, thorPointer->width, 1, background);
+			drawCopyImage(thorPointer->oldRow, thorPointer->oldCol, thorPointer->width, 1, background);
+		}
 		//drawCopyImage(thorPointer->oldRow, thorPointer->oldCol, thorPointer->width, thorPointer->height, background);
 		//drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
 	} else if (KEY_DOWN_NOW(BUTTON_UP))
 	{
-		thorPointer->dy = -1;
-		thorPointer->oldRow = thorPointer->row;
-		thorPointer->oldCol = thorPointer->col;
-		thorPointer->row += thorPointer->dy;
+		if (thorPointer->row >= 10) {
+			thorPointer->dy = -1;
+			thorPointer->oldRow = thorPointer->row;
+			thorPointer->oldCol = thorPointer->col;
+			thorPointer->row += thorPointer->dy;
+			drawCopyImage(thorPointer->oldRow + thorPointer->height, thorPointer->oldCol, thorPointer->width, 1, background);
+		}
+		
 
 		//drawCopyImage(thorPointer->oldRow, thorPointer->oldCol, thorPointer->width, thorPointer->height, background);
 
-		drawCopyImage(thorPointer->oldRow + thorPointer->height, thorPointer->oldCol, thorPointer->width, 1, background);
+		
 		//drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
 	} else if (KEY_DOWN_NOW(BUTTON_RIGHT))
 	{
-		thorPointer->dx = 1;
-		thorPointer->oldRow = thorPointer->row;
-		thorPointer->oldCol = thorPointer->col;
-		thorPointer->col += thorPointer->dx;
-		drawCopyImage(thorPointer->oldRow, thorPointer->oldCol, 1, thorPointer->height, background);
+		if (thorPointer->col < (240-thorPointer->width)) {
+			thorPointer->dx = 1;
+			thorPointer->oldRow = thorPointer->row;
+			thorPointer->oldCol = thorPointer->col;
+			thorPointer->col += thorPointer->dx;
+			drawCopyImage(thorPointer->oldRow, thorPointer->oldCol, 1, thorPointer->height, background);
+		}
 		//drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
 		//drawCopyImage(thorPointer->oldRow, thorPointer->oldCol, thorPointer->width, thorPointer->height, background);
 	} else if (KEY_DOWN_NOW(BUTTON_LEFT))
 	{
-		thorPointer->dx = -1;
-		thorPointer->oldRow = thorPointer->row;
-		thorPointer->oldCol = thorPointer->col;
-		thorPointer->col += thorPointer->dx;
-		drawCopyImage(thorPointer->oldRow, thorPointer->oldCol + thorPointer->width, 1, thorPointer->height, background);
+		if (thorPointer->col >= 1){
+			thorPointer->dx = -1;
+			thorPointer->oldRow = thorPointer->row;
+			thorPointer->oldCol = thorPointer->col;
+			thorPointer->col += thorPointer->dx;
+			drawCopyImage(thorPointer->oldRow, thorPointer->oldCol + thorPointer->width, 1, thorPointer->height, background);
+		}
 		//drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
 		//drawCopyImage(thorPointer->oldRow, thorPointer->oldCol, thorPointer->width, thorPointer->height, background);
 	}
@@ -175,6 +193,7 @@ void fight(enum ENEMYState enemy)
 
 	// hela code
 	// 
+
 
 
 }
@@ -218,20 +237,24 @@ void loseGame(enum ENEMYState enemy)
 void gameover()
 {
 	delay(100);
-	fillScreen3(RED);
+	fillScreen3(BLUE);
 	delay(100);
 	drawImage3(0, 0, 240, 160, gameOver);
 	delay(100);
-	char cont[19] = "Press A To Continue";
-	drawString(100, 60, cont, WHITE);
-	int reset = 0;
-	while (!reset)
-	{
-		if (KEY_DOWN_NOW(BUTTON_A))
-		{
-      		reset = 1;
-    	}
-	}
-	enemy = LOKI;
-	state = START;
+	// char cont[19] = "Press A To Continue";
+	// drawString(100, 60, cont, WHITE);
+	// int reset = 0;
+	// while (!reset)
+	// {
+	// 	if (KEY_DOWN_NOW(BUTTON_A))
+	// 	{
+ //      		reset = 1;
+ //    	}
+	// }
+	// enemy = LOKI;
+	// state = START;
+	delay(40);
+	drawImage3(0, 0, 240, 160, poster);
+	delay(40);
+	drawImage3(0, 0, 240, 160, characters);
 }
