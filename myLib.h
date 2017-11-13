@@ -32,8 +32,8 @@ extern unsigned short *videoBuffer;
 #define DKGRAY COLOR(15, 15, 15)
 
 
-//#define OFFSET(row, col, rowlen)  ((row)*(rowlen)+(col))
-#define OFFSET(r,c) ((r)*240+(c))
+#define OFFSET(row, col, rowlen)  ((row)*(rowlen)+(col))
+//#define OFFSET(r,c) ((r)*240+(c))
 
 
 // Buttons
@@ -124,12 +124,15 @@ typedef struct OBJECTLOCATION{
 	width,
 	dx,
 	dy,
+	oldRow,
+	oldCol,
 	health;
 }objetcLocation;
 
 // Prototype
 void waitForVblank();
 void drawImage3(int x, int y, int width, int height, const unsigned short *image);
+void drawCopyImage(int x, int y, int width, int height, const unsigned short *image);
 void drawRectangle(int row, int col, int width, int height, unsigned short color);
 void setPixel(int row, int col, unsigned short color);
 void delay(int n);

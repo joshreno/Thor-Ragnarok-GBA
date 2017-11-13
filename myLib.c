@@ -12,24 +12,32 @@ void drawImage3(int x, int y, int width, int height, const unsigned short *image
   for(int i = 0; i < height; i++) {
     DMA[3].src = image + width*i;
     //DMA[3].dst = &videoBuffer[OFFSET(x + i, y)];
-    DMA[3].dst = videoBuffer + 240*x + 240*i + y;
+    DMA[3].dst = videoBuffer + OFFSET(x +i, y, 240);
+    DMA[3].cnt = width | DMA_SOURCE_INCREMENT | DMA_DESTINATION_INCREMENT | DMA_ON;
+  }
+}
+
+void drawCopyImage(int x, int y, int width, int height, const unsigned short *image) {
+  for (int i = 0; i < height; i++) {
+    //DMA[3].src = image + width*i;
+    DMA[3].src = image + OFFSET(x + i, y, 240);
+    DMA[3].dst = videoBuffer + OFFSET(x + i, y, 240);
     DMA[3].cnt = width | DMA_SOURCE_INCREMENT | DMA_DESTINATION_INCREMENT | DMA_ON;
   }
 }
 
 void drawRectangle(int row, int col, int width, int height, unsigned short color)
 {
-  for(int l = 0; l <= height/2; l++) {
+  for(int l = 0; l < height; l++) {
     for(int i = 0; i < width; i++) {
       setPixel(row + l, col + i, color);
-      setPixel(row + height - l, col + i, color);
     }
   }
 }
 
 void setPixel(int row, int col, unsigned short color)
 {
-  videoBuffer[OFFSET(row, col)] = color;
+  videoBuffer[OFFSET(row, col, 240)] = color;
 }
 
 void delay(int n) {

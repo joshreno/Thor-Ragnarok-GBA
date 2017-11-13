@@ -10,7 +10,7 @@ This is a Game Boy Advance game I made for CS 2110 HW9.
 	START = Enter, to start the game
 	SELECT = Backspace, to reset to start screen
 	UP = Up
-	DOWN = down
+	DOWN = Down
 	LEFT = Left
 	RIGHT = Right
 	A = Z
