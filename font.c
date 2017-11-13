@@ -1,4 +1,5 @@
-#include <myLib.h>
+#include "myLib.h"
+#include "text.h"
 
 void drawChar(int row, int col, char ch, u16 color)
 {
@@ -20,7 +21,6 @@ void drawString(int row, int col, char *str, u16 color)
 	{
 		drawChar(row, col, *str++, color);
 		col += 6;
-		
 	}
 }
 

@@ -1,15 +1,25 @@
-typedef unsigned int u32;
+typedef unsigned char u8;
 typedef unsigned short u16;
+typedef unsigned int u32;
+typedef char s8;
+typedef short s16;
+typedef int s32;
 
+extern unsigned short *videoBuffer;
 
+#define videoBuffer ((unsigned short *)0x6000000)
 #define REG_DISPCTL *(unsigned short *)0x4000000
 #define MODE3 3
-
 #define SCANLINECOUNTER *(volatile unsigned short *)0x4000006
 
-#define SCREENHEIGHT 149
+#define SPRITEMEM  ((u16 *)0x7000000)
+#define SPRITEDATA ((u16 *)(0x6010000))
+#define SPRITEPAL  ((u16 *)0x5000200)
+#define OBJ_ENABLE 0x1000
 
 #define BG2_ENABLE (1<<10)
+
+
 #define COLOR(r, g, b) ((r) | (g)<<5 | (b)<<10)
 #define RED COLOR(31, 0, 0)
 #define GREEN COLOR(0, 31, 0)
@@ -38,9 +48,8 @@ typedef unsigned short u16;
 #define BUTTON_R		(1<<8)
 #define BUTTON_L		(1<<9)
 
-#define KEY_DOWN_NOW(key)  (~(BUTTONS) & key)
-
 #define BUTTONS *(volatile unsigned int *)0x4000130
+#define KEY_DOWN_NOW(key)  (~(BUTTONS) & key)
 
 /* DMA */
 
@@ -101,6 +110,27 @@ typedef struct
 #define DMA_IRQ (1 << 30)
 #define DMA_ON (1 << 31)
 
+//
+typedef struct { 
+	int top, bottom, left, right; } BORDER;
+
+typedef struct {
+	int row,
+	int col,
+	int height,
+	int width,
+	int dx,
+	int dy,
+	int health
+} OBJLOCATION
 
 
-extern unsigned short *videoBuffer;
+
+// Prototype
+void waitForVblank();
+void drawImage3(int x, int y, int width, int height, const unsigned short *image);
+void drawRectangle(int row, int col, int width, int height, unsigned short color);
+void setPixel(int row, int col, unsigned short color);
+void delay(int n);
+void updateHearts(int hp, const unsigned short *image);
+void fillScreen3(volatile unsigned short color);

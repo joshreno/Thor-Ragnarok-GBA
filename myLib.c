@@ -2,11 +2,6 @@
 #include <stdlib.h>
 #include <myLib.h>
 
-void setPixel(int row, int col, unsigned short color)
-{
-  videoBuffer[OFFSET(row, col)] = color;
-}
-
 void waitForVblank() {
   while(*SCANLINECOUNTER >= 160);
   while(*SCANLINECOUNTER < 160);
@@ -30,3 +25,59 @@ void drawRectangle(int row, int col, int width, int height, unsigned short color
   }
 }
 
+void setPixel(int row, int col, unsigned short color)
+{
+  videoBuffer[OFFSET(row, col)] = color;
+}
+
+void delay(int n) {
+  volatile int x = 0;
+  for(int i = 0; i < n*500; i++) {
+    x++;
+  }
+}
+
+void updateHearts(int player, int hp, const unsigned short *image) {
+  drawImage3(0, 0, 240, 160, image);
+  unsigned short color;
+  int ic;
+  int ir;
+  for (int h = 0; h < hp; h++) {
+  	if (player == 1) {
+  		ic = 150 + 9*h;
+  	} else {
+  		ic = 4;
+  	}
+    ir = 2;
+    if (h <= hp) {
+    	if (player == 1)
+    	{
+    		color = RED;
+    	} else if (color == 2) {
+    		color = YELLOW;
+    	} else {
+    		color = GREEN;
+    	}
+    } else {
+      color = WHITE;
+    }
+    // set outside of heart
+    for (int i = 0; i < 3; i++) {
+      setPixel(ir + i, ic, color);
+      setPixel(ir + i, ic + 4, color);
+    }
+    // set middle of heart
+    for (int i = 0; i < 4; i++) {
+      setPixel(ir + i, ic + 1, color);
+      setPixel(ir + i + 1, ic + 2, color);
+      setPixel(ir + i, ic + 3, color);
+    }
+  }
+}
+
+
+void fillScreen3(volatile unsigned short color) {
+  DMA[3].src = &color;
+  DMA[3].dst = videoBuffer;
+  DMA[3].cnt = (240*160) | DMA_SOURCE_FIXED | DMA_DESTINATION_INCREMENT | DMA_ON;
+}
