@@ -46,8 +46,8 @@ objetcLocation *enemyPointer = &enemyE;
 
 void setInitialVariables()
 {
-	thorPointer->row = 5;
-	thorPointer->col = 5;
+	thorPointer->row = 20;
+	thorPointer->col = 20;
 	thorPointer->health = hp;
 	thorPointer->dx = 1;
 	thorPointer->dy = 1;
@@ -79,6 +79,7 @@ int main(void) {
 				break;
 			case FIGHT:
 				setInitialVariables();
+				drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
 				fight(enemy);
 				break;
 
@@ -104,11 +105,15 @@ void startGame()
 	{
 		if (KEY_DOWN_NOW(BUTTON_START))
 		{
-			drawImage3(0, 0, 240, 160, HeimdallsObservatory3Thor);
+			delay(10);
+			drawImage3(0, 0, 240, 160, background);
+			fillScreen3(BLACK);
+			delay(10);
 			break;
 		}
 	}
 	state = FIGHT;
+	drawImage3(0, 0, 240, 160, background);
 }
 
 void fight(enum ENEMYState enemy)
@@ -118,41 +123,29 @@ void fight(enum ENEMYState enemy)
 		state = LOSE;
 		return;
 	}
+	delay(10);
 	if (KEY_DOWN_NOW(BUTTON_UP))
 	{
-		if (! (thorPointer->row + thorPointer->height > 160))
-		{
-			thorPointer->dy = 1;
-			thorPointer->row += thorPointer->dy;
-		}
-		drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
+		thorPointer->dy = 10;
+		thorPointer->row = thorPointer->row + thorPointer->dy;
+		//drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
 	} else if (KEY_DOWN_NOW(BUTTON_DOWN))
 	{
-		if (! (thorPointer->row < 0))
-		{
-			thorPointer->dy = -1;
-			thorPointer->row += thorPointer->dy;
-		}
-		drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
+		thorPointer->dy = -10;
+		thorPointer->row += thorPointer->dy;
+		//drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
 	} else if (KEY_DOWN_NOW(BUTTON_RIGHT))
 	{
-		if (! (thorPointer->col + thorPointer->width > 240))
-		{
-			thorPointer->dx = 1;
-			thorPointer->col += thorPointer->dx;
-		}
-		drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
+		thorPointer->dx = 10;
+		thorPointer->col += thorPointer->dx;
+		//drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
 	} else if (KEY_DOWN_NOW(BUTTON_LEFT))
 	{
-		if (! (thorPointer->col > 0))
-		{
-			thorPointer->dx = -1;
-			thorPointer->col += thorPointer->dx;
-		}
-		drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
-	} else {
-		drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
+		thorPointer->dx = -10;
+		thorPointer->col += thorPointer->dx;
+		//drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
 	}
+	delay(5);
 
 	// hela code
 	// 

@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "myLib.h"
+#include "text.h"
 
 void waitForVblank() {
   while(*SCANLINECOUNTER >= 160);
@@ -8,10 +9,11 @@ void waitForVblank() {
 }
 
 void drawImage3(int x, int y, int width, int height, const unsigned short *image) { 
-  for(int i = 0; i < height - 1; i++) {
-    DMA[3].src = &image[OFFSET(i, width)];
-    DMA[3].dst = &videoBuffer[OFFSET(x + i, y)];
-    DMA[3].cnt = 240 | DMA_SOURCE_INCREMENT | DMA_DESTINATION_INCREMENT | DMA_ON;
+  for(int i = 0; i < height; i++) {
+    DMA[3].src = image + width*i;
+    //DMA[3].dst = &videoBuffer[OFFSET(x + i, y)];
+    DMA[3].dst = videoBuffer + 240*x + 240*i + y;
+    DMA[3].cnt = width | DMA_SOURCE_INCREMENT | DMA_DESTINATION_INCREMENT | DMA_ON;
   }
 }
 
