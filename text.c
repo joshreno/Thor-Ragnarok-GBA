@@ -1,6 +1,9 @@
 #include "myLib.h"
 #include "text.h"
 
+/**
+* draws the char vlue
+*/
 void drawChar(int row, int col, char ch, u16 color)
 {
 	for(int r=0; r<8; r++)
@@ -15,6 +18,9 @@ void drawChar(int row, int col, char ch, u16 color)
 	}
 }
 
+/**
+* Draws the string
+*/
 void drawString(int row, int col, char *str, u16 color)
 {
 	while(*str)

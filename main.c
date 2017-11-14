@@ -17,6 +17,9 @@
 #include "characters.h"
 #include "main.h"
 
+/**
+* Enum for game state
+*/
 enum GBAState {
 	START,
 	FIGHT,
@@ -24,6 +27,9 @@ enum GBAState {
 	GAMEOVER
 };
 
+/**
+* Enum for enemy
+*/
 enum ENEMYState {
 	LOKI,
 	HULK,
@@ -38,15 +44,26 @@ enum ENEMYState {
 enum GBAState state = START;
 enum ENEMYState enemy = LOKI;
 
+/**
+* Reset is for loops
+* hp_count is for when we change hp
+* hp is Thor's hp
+*/
 int reset = 0;
 int hp_count = 1;
 int hp = 5;
 
+/**
+* where I use structs
+*/
 objetcLocation thorE;
 objetcLocation enemyE;
 objetcLocation *thorPointer = &thorE;
 objetcLocation *enemyPointer = &enemyE;
 
+/**
+* Sets the variables for the structs
+*/
 void setInitialVariables()
 {
 	thorPointer->row = 20;
@@ -68,6 +85,9 @@ void setInitialVariables()
 	hp_count = 1;
 }
 
+/**
+* Sets the image when the game ends
+*/
 void gameover()
 {
 	// delay(1000);
@@ -75,9 +95,19 @@ void gameover()
 	// drawImage3(0, 0, 240, 160, poster);
 	// delay(40);
 	drawImage3(0, 0, 240, 160, characters);
+	delay(750);
+	drawImage3(0, 0, 240, 160, poster);
+	delay(750);
+	drawImage3(0, 0, 240, 160, gameOver);
+	char *textEnd = "Press select to restart";
+	drawString(50, 50, textEnd, GREEN);
+	delay(750);
 	enemy = LOKI;
 }
 
+/**
+* Sets the image and text when you lose.
+*/
 void loseGame(enum ENEMYState enemy)
 {
 	fillScreen3(BLACK);
@@ -90,18 +120,18 @@ void loseGame(enum ENEMYState enemy)
 	switch (enemy)
 	{
 		case LOKI:
-			drawString(10, 90, textLoki, YELLOW);
+			drawString(25, 90, textLoki, YELLOW);
 			break;
 		case HULK:
-			drawString(10, 90, textHulk, GREEN);
+			drawString(25, 90, textHulk, GREEN);
 			break;
 		case HELA:
-			drawString(10, 90, textHela, GREEN);
+			drawString(25, 90, textHela, RED);
 			break;
 	}
 	delay(100);
-	char cont[24] = "Press Select To Continue";
-	drawString(100, 60, cont, WHITE);
+	char *cont = "Press Select To Continue";
+	drawString(50, 50, cont, BLUE);
 	int reset = 0;
 	while (!reset)
 	{
@@ -114,8 +144,12 @@ void loseGame(enum ENEMYState enemy)
 	state = START;
 }
 
+/**
+* Fighting logic
+*/
 void fight()
 {
+	// update for thor and the enemy
 	if (thorPointer->health == 0) 
 	{
 		state = LOSE;
@@ -125,6 +159,8 @@ void fight()
 		enemyPointer->health = 1;
 		updateHearts(3, enemyPointer->health, background);
 	}
+
+	// assigns the image based on enemy
 	const unsigned short *fighting;
 	switch (enemy){
 		case LOKI:
@@ -137,6 +173,8 @@ void fight()
 			fighting = hela;
 			break;
 	}
+
+	// button logic where drawCopyImage repaints the background
 	if (KEY_DOWN_NOW(BUTTON_DOWN))
 	{
 		if (thorPointer->row < (160-thorPointer->height)) {
@@ -196,6 +234,7 @@ void fight()
 	}
 	drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
 
+	// same logic but for enemy instead of thor
 	enemyPointer->oldCol = enemyPointer->col;
 	enemyPointer->oldRow = enemyPointer->row;
 	enemyPointer->row += enemyPointer->dy;
@@ -231,6 +270,8 @@ void fight()
 	}
 	drawImage3(enemyPointer->row, enemyPointer->col, enemyPointer->width, enemyPointer->height, fighting);
 
+	// this checks to see if the two images have intersected anywhere 
+	// and does the appropriate logic based on this
 	int thorRow0 = thorPointer->row;
 	int thorRowMax = thorPointer->row + thorPointer->height;
 	int thorCol0 = thorPointer->col;
@@ -254,7 +295,8 @@ void fight()
 		enemyPointer->dy = enemyPointer->dy * -1;
 		enemyPointer->dx = enemyPointer->dx * -1;
 
-
+		// if thor is still during intersect, then it loses points
+		// eslse the enemy loses points during intersection
 		if (thorPointer->dx == 0 && thorPointer->dy == 0) {
 			thorPointer->health = thorPointer->health -1;
 			hp_count += 1;
@@ -274,12 +316,14 @@ void fight()
 	}
 }
 
+/**
+* draws the imaage
+*/
 void startGame()
 {
 	drawImage3(0, 0, 240, 160, start);
-	char str[11] = "Press START";
+	char *str = "Press START";
 	drawString(10, 90, str, BLUE);
-	//int count = 0;
 	while (1)
 	{
 		if (KEY_DOWN_NOW(BUTTON_START))
@@ -288,6 +332,7 @@ void startGame()
 			break;
 		}
 	}
+	// draws the appropriate variables
 	state = FIGHT;
 	drawImage3(0, 0, 240, 160, background);
 	setInitialVariables();
@@ -298,10 +343,12 @@ void startGame()
 }
 
 int main(void) {
+	// GBA code
 	REG_DISPCTL = MODE3 | BG2_ENABLE;
 	while (1)
 	{
 		waitForVblank();
+		// this below lets you go back to start at any point
 		if (KEY_DOWN_NOW(BUTTON_SELECT))
 		{
 			state = START;
