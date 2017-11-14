@@ -39,7 +39,7 @@ enum GBAState state = START;
 enum ENEMYState enemy = LOKI;
 
 int reset = 0;
-int hp_dir = -1;
+int hp_count = 1;
 int hp = 5;
 
 objetcLocation thorE;
@@ -64,6 +64,8 @@ void setInitialVariables()
 	enemyPointer->dy = 1;
 	enemyPointer->height = LOKI_HEIGHT;
 	enemyPointer->width = LOKI_WIDTH;
+
+	hp_count = 1;
 }
 
 void gameover()
@@ -98,12 +100,12 @@ void loseGame(enum ENEMYState enemy)
 			break;
 	}
 	delay(100);
-	char cont[19] = "Press A To Continue";
+	char cont[24] = "Press Select To Continue";
 	drawString(100, 60, cont, WHITE);
 	int reset = 0;
 	while (!reset)
 	{
-		if (KEY_DOWN_NOW(BUTTON_A))
+		if (KEY_DOWN_NOW(BUTTON_SELECT))
 		{
       		reset = 1;
     	}
@@ -188,6 +190,9 @@ void fight()
 		}
 		//drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
 		//drawCopyImage(thorPointer->oldRow, thorPointer->oldCol, thorPointer->width, thorPointer->height, background);
+	} else {
+		thorPointer->dx = 0;
+		thorPointer->dy = 0;
 	}
 	drawImage3(thorPointer->row, thorPointer->col, thorPointer->width, thorPointer->height, thor);
 
@@ -248,15 +253,23 @@ void fight()
 	if (intersect1 || intersect2) {
 		enemyPointer->dy = enemyPointer->dy * -1;
 		enemyPointer->dx = enemyPointer->dx * -1;
-		enemyPointer->health = 0;
-		if (enemy == HELA) {
+
+
+		if (thorPointer->dx == 0 && thorPointer->dy == 0) {
+			thorPointer->health = thorPointer->health -1;
+			hp_count += 1;
+			updateHearts(4, hp_count, background);
+		} else {
+			enemyPointer->health = 0;
+			if (enemy == HELA) {
 			state = GAMEOVER;
-		}
-		if (enemy == HULK) {
-			enemy = HELA;
-		}
-		if (enemy == LOKI) {
-			enemy = HULK;
+			}
+			if (enemy == HULK) {
+				enemy = HELA;
+			}
+			if (enemy == LOKI) {
+				enemy = HULK;
+			}
 		}
 	}
 }

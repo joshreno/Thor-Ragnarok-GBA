@@ -58,7 +58,7 @@ void updateHearts(int player, int hp, const unsigned short *image) {
   int ic;
   int ir;
   for (int h = 0; h < hp; h++) {
-  	if (player == 1) {
+  	if (player == 1 || player == 4) {
   		ic = 190 + 9*h;
   	} else {
   		ic = 40;
