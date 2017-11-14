@@ -1,7 +1,7 @@
 ################################################################################
 # These are variables for the GBA toolchain build
 # You can add others if you wish to
-# ***** Kevin Liao *****
+# ***** Joshua Reno *****
 ################################################################################
 
 # The name of your desired GBA game
